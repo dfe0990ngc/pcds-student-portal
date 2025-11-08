@@ -27,6 +27,7 @@ frontend/.env
 frontend/dist
 frontend/node_modules
 frontend/*.md
+frontend/package-lock.json
 
 api/config.production
 api/*.md

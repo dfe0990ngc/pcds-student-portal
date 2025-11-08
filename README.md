@@ -53,7 +53,7 @@ Upload all files to your web directory (e.g., `/public_html/api/`)
 Run the SQL migration script:
 ```sql
 -- In phpMyAdmin, run migrations.sql
--- This creates: student_credentials, refresh_tokens tables
+-- This creates: student_credentials, refresh_tokens, grades and studeaccounts tables
 ```
 
 ### 3. Configure Settings
@@ -88,22 +88,6 @@ chmod 755 core/ controllers/ middleware/
 
 ### Public Endpoints
 
-#### Register
-```http
-POST /api/auth/register
-Content-Type: application/json
-
-{
-  "student_number": "2024-12345",
-  "first_name": "Juan",
-  "last_name": "Dela Cruz",
-  "birthday": "2000-01-15",
-  "email": "juan@example.com",
-  "password": "SecurePass123!",
-  "password_confirmation": "SecurePass123!"
-}
-```
-
 #### Login
 ```http
 POST /api/auth/login
@@ -114,14 +98,23 @@ Content-Type: application/json
   "password": "SecurePass123!"
 }
 
-Response:
+
+Response Success:
 {
   "success": true,
   "message": "Login successful",
   "access_token": "eyJ0eXAiOiJKV1QiLCJhbGc...",
   "refresh_token": "a1b2c3d4e5f6...",
   "token_type": "Bearer",
-  "expires_in": 3600
+  "expires_in": 3600,
+  "StudentNumber": "2025-00001"
+}
+
+Response Error:
+{
+  "success": false,
+  "message": "Please verify your email before logging in",
+  "verification_required": true
 }
 ```
 
@@ -132,6 +125,36 @@ Content-Type: application/json
 
 {
   "email": "juan@example.com"
+}
+
+Response Success:
+{
+  "success": true,
+  "message": "Reset Code sent! Please check your email inbox/spam folder.",
+  "verification_required": true,
+  "email": "juan@example.com",
+  "email_sent": true
+}
+
+Response Error 1:
+{
+  "success": false,
+  "message": "Validation Error"
+}
+
+Response Error 2:
+{
+  "success": false,
+  "message": "Your email is not yet exists in our database."
+}
+
+Response Error 3:
+{
+  "success": false,
+  "message": "We had trouble sending the reset code to your email. Please check your spam folder or contact support.",
+  "verification_required": true,
+  "email": "juan@example.com",
+  "email_sent": false
 }
 ```
 
@@ -276,8 +299,7 @@ Response:
 - Signature verification on every request
 
 ### 3. Rate Limiting
-- Registration: 5 attempts per hour per IP
-- Login: 5 attempts per 15 minutes per IP
+- Login: 5 attempts per 2 minutes per IP
 - Automatic lockout on abuse
 
 ### 4. Input Validation
@@ -290,7 +312,6 @@ Response:
 - Proper headers for cross-origin requests
 
 ### 6. Identity Verification
-- Multi-field verification (StudentNumber + Name + Birthday)
 - Prevents unauthorized account claiming
 - Email verification required
 
@@ -299,19 +320,6 @@ Response:
 ## 🧪 Testing with cURL
 
 ```bash
-# Register
-curl -X POST https://yourschool.edu/api/auth/register \
-  -H "Content-Type: application/json" \
-  -d '{
-    "student_number": "2024-12345",
-    "first_name": "Juan",
-    "last_name": "Dela Cruz",
-    "birthday": "2000-01-15",
-    "email": "juan@example.com",
-    "password": "SecurePass123!",
-    "password_confirmation": "SecurePass123!"
-  }'
-
 # Login
 curl -X POST https://yourschool.edu/api/auth/login \
   -H "Content-Type: application/json" \
@@ -348,9 +356,8 @@ For password reset functionality, configure SMTP in `config.php`:
 ### Daily Import Handling
 Since data imports at 5 PM daily:
 
-1. **Registration Window**: Students can register anytime
-2. **Data Sync**: Verification checks against latest import
-3. **Credential Persistence**: Login credentials stored separately
+1. **Data Sync**: Verification checks against latest import
+2. **Credential Persistence**: Login credentials stored separately
 
 ### Cleanup Tasks (Cron Jobs)
 
@@ -378,13 +385,11 @@ Since data imports at 5 PM daily:
 
 ### "Too many attempts"
 - Rate limit triggered
-- Wait 15 minutes (login) or 1 hour (registration)
+- Wait 2 minutes (login)
 - Check IP address if behind proxy
 
 ### "Student verification failed"
-- Name/Birthday must match exactly
-- Check for extra spaces in database
-- Birthday format: YYYY-MM-DD
+- Check for email existence in the database
 
 ---
 
@@ -400,13 +405,12 @@ Since data imports at 5 PM daily:
 
 ## 🔄 Future Enhancements
 
-- [ ] Implement actual email sending (currently TODO)
 - [ ] Add Redis for better rate limiting
 - [ ] Session management dashboard
 - [ ] Two-factor authentication (2FA)
 - [ ] IP whitelist/blacklist
 - [ ] Audit logging
-- [ ] API rate limiting per user
+- [ ] API rate limiting per user per IP address
 
 ---
 
