@@ -1,0 +1,117 @@
+<?php
+// core/Auth.php
+declare(strict_types=1);
+
+class Auth {
+    public static function hashPassword(string $password): string {
+        return password_hash($password, PASSWORD_ARGON2ID, [
+            'memory_cost' => 65536,
+            'time_cost' => 4,
+            'threads' => 3
+        ]);
+    }
+    
+    public static function verifyPassword(string $password, string $hash): bool {
+        return password_verify($password, $hash);
+    }
+    
+    public static function generateToken(string $studentNumber): string {
+        $header = json_encode(['typ' => 'JWT', 'alg' => JWT_ALGORITHM]);
+        $payload = json_encode([
+            'sub' => $studentNumber,
+            'iat' => time(),
+            'exp' => time() + JWT_EXPIRY
+        ]);
+        
+        $base64UrlHeader = self::base64UrlEncode($header);
+        $base64UrlPayload = self::base64UrlEncode($payload);
+        
+        $signature = hash_hmac('sha256', 
+            $base64UrlHeader . '.' . $base64UrlPayload, 
+            JWT_SECRET, 
+            true
+        );
+        $base64UrlSignature = self::base64UrlEncode($signature);
+        
+        return $base64UrlHeader . '.' . $base64UrlPayload . '.' . $base64UrlSignature;
+    }
+    
+    public static function verifyToken(string $token): ?array {
+        $parts = explode('.', $token);
+        if (count($parts) !== 3) {
+            return null;
+        }
+        
+        [$header, $payload, $signature] = $parts;
+        
+        $validSignature = hash_hmac('sha256',
+            $header . '.' . $payload,
+            JWT_SECRET,
+            true
+        );
+        
+        if (!hash_equals(self::base64UrlEncode($validSignature), $signature)) {
+            return null;
+        }
+        
+        $payloadData = json_decode(self::base64UrlDecode($payload), true);
+        
+        if (!$payloadData || $payloadData['exp'] < time()) {
+            return null;
+        }
+        
+        return $payloadData;
+    }
+    
+    public static function generateRefreshToken(): string {
+        return bin2hex(random_bytes(32));
+    }
+    
+    public static function generateVerificationToken(): string {
+        return strtoupper(bin2hex(random_bytes(4)));
+    }
+    
+    public static function getCurrentUser(): ?string {
+        $headers = getallheaders();
+        $authHeader = $headers['Authorization'] ?? $headers['authorization'] ?? null;
+        
+        if (!$authHeader || !preg_match('/Bearer\s+(.*)$/i', $authHeader, $matches)) {
+            return null;
+        }
+        
+        $token = $matches[1];
+        $payload = self::verifyToken($token);
+        
+        return $payload['sub'] ?? null;
+    }
+    
+    public static function checkRateLimit(string $key, int $limit, int $window): bool {
+        $cacheFile = sys_get_temp_dir() . '/rate_limit_' . md5($key) . '.json';
+        
+        $data = [];
+        if (file_exists($cacheFile)) {
+            $content = file_get_contents($cacheFile);
+            $data = json_decode($content, true) ?? [];
+        }
+        
+        $now = time();
+        $data = array_filter($data, fn($timestamp) => $timestamp > $now - $window);
+        
+        if (count($data) >= $limit) {
+            return false;
+        }
+        
+        $data[] = $now;
+        file_put_contents($cacheFile, json_encode($data));
+        
+        return true;
+    }
+    
+    private static function base64UrlEncode(string $data): string {
+        return rtrim(strtr(base64_encode($data), '+/', '-_'), '=');
+    }
+    
+    private static function base64UrlDecode(string $data): string {
+        return base64_decode(strtr($data, '-_', '+/'));
+    }
+}

@@ -1,0 +1,120 @@
+export interface Student {
+  StudentNumber: string;
+  FirstName: string;
+  MiddleName: string;
+  LastName: string;
+  Course: string;
+  YearLevel: string;
+  Status: string;
+  Birthday: string;
+  BirthPlace: string;
+}
+
+export interface Account {
+  AccountID: number;
+  StudentNumber: string;
+  FirstName: string;
+  MiddleName: string;
+  LastName: string;
+  Course: string;
+  YearLevel: string;
+  Status: string;
+  LecUnits: number;
+  LecRate: number;
+  TotalLec: number;
+  LabUnits: number;
+  LabRate: number;
+  TotalLab: number;
+  OldAccount: number;
+  FeesDesc: string;
+  FeesAmount: number;
+  TotalFees: number;
+  DiscPercentage: number;
+  Discount: number;
+  AcctTotal: number;
+  TotalPayments: number;
+  CurrentBalance: number;
+  Sem: string;
+  SY: string;
+  Term: string;
+  Desc1: string;
+  Amount1: number;
+  Desc2: string;
+  Amount2: number;
+  Desc3: string;
+  Amount3: number;
+  Desc4: string;
+  Amount4: number;
+  Desc5: string;
+  Amount5: number;
+  RegFee: number;
+  Section: string;
+  PaymentMode: string;
+  InstallmentFee: number;
+  DateUpdated: string;
+  Refund: number;
+  DiscDesc1: string;
+  DiscAmount1: number;
+  DiscDesc2: string;
+  DiscAmount2: number;
+  DiscDesc3: string;
+  DiscAmount3: number;
+  DiscDesc4: string;
+  DiscAmount4: number;
+  DiscDesc5: string;
+  DiscAmount5: number;
+  TotalComputerUnits: number;
+  TotalCulinaryUnits: number;
+  TotalCulinaryCharges: number;
+  TotalComputerCharges: number;
+  CulinaryRates: number;
+  ComputerRates: number;
+  Transcode: string;
+  Others: number;
+  Email: string;
+}
+
+export interface Grade {
+  GradeID: number;
+  ClassNo: string;
+  FacultyID: string;
+  FacultyName: string;
+  StudentNumber: string;
+  FirstName: string;
+  MiddleName: string;
+  LastName: string;
+  Birthday: string;
+  BirthPlace: string;
+  Gender: string;
+  SubjectCode: string;
+  Description: string;
+  LecUnit: number;
+  LabUnit: string;
+  Instructor: string;
+  Section: string;
+  PGrade: number;
+  PreMid: number;
+  MGrade: number;
+  PreFinal: number;
+  FGrade: number;
+  Average: number;
+  Sem: string;
+  SY: string;
+  Status: string;
+  Equivalent: string;
+  CreditUnits: number;
+  SchoolName: string;
+  Course: string;
+  GradeStatus: string;
+  YearLevel: string;
+  Remarks: string;
+  GradRefNo: string;
+  GradDate: string;
+}
+
+export interface APIResponseType {
+  verification_required?: boolean;
+  message?: string;
+  success?: boolean;
+  data?: any | null;
+}
