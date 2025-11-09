@@ -1,0 +1,222 @@
+@media print {
+    /* Hide everything except print content */
+    body * {
+        visibility: hidden;
+    }
+    
+    #printable-content,
+    #printable-content * {
+        visibility: visible;
+    }
+    
+    #printable-content {
+        position: absolute;
+        left: 0;
+        top: 0;
+        width: 100%;
+        page-break-inside: auto;
+    }
+
+    .print-margin-lr{
+        margin: 0 0.5cm;
+    }
+    
+    /* Page setup */
+    @page {
+        size: A4;
+        margin: 3cm 1cm 1cm 1cm;
+    }
+    
+    /* Print header that repeats on each page */
+    .print-header {
+        position: absolute;
+        top: 0;
+        left: 0;
+        right: 0;
+        height: 2.5cm;
+        background: white;
+        z-index: 1000;
+        display: flex !important;
+        align-items: center;
+        gap: 1rem;
+        padding: 0.5cm;
+        border-bottom: 2px solid #008ea2;
+        margin: 0;
+    }
+    
+    .print-header .logo {
+        width: 60px !important;
+        height: 60px !important;
+        flex-shrink: 0;
+    }
+    
+    .print-header h1 {
+        font-size: 24px !important;
+        font-weight: bold !important;
+        color: #008ea2 !important;
+        margin: 0 !important;
+    }
+    
+    /* Hide screen header, show print header */
+    .screen-header {
+        display: none !important;
+    }
+    
+    /* Ensure content starts below fixed header */
+    .print-content {
+        margin-top: 3cm !important;
+        padding-top: 0.5cm;
+    }
+    
+    /* Hide elements that shouldn't print */
+    .no-print {
+        display: none !important;
+    }
+    
+    /* Reset styles for print */
+    body {
+        margin: 3cm 1cm 1cm 1cm;
+        padding: 0;
+        background: white !important;
+        font-size: 10pt;
+    }
+    
+    /* Page breaks */
+    .page-break-before {
+        page-break-before: always;
+    }
+    
+    .page-break-after {
+        page-break-after: always;
+    }
+    
+    .page-break-avoid {
+        page-break-inside: avoid;
+    }
+    
+    /* Headers */
+    h1, h2, h3 {
+        page-break-after: avoid;
+    }
+    
+    /* Tables */
+    table {
+        page-break-inside: auto;
+    }
+    
+    tr {
+        page-break-inside: avoid;
+        page-break-after: auto;
+    }
+    
+    thead {
+        display: table-header-group;
+    }
+    
+    tfoot {
+        display: table-footer-group;
+    }
+    
+    /* Force 3-column layout like desktop */
+    .print-grid-3 {
+        display: grid !important;
+        grid-template-columns: repeat(3, 1fr) !important;
+        gap: 1rem !important;
+    }
+    
+    .print-grid-2 {
+        display: grid !important;
+        grid-template-columns: repeat(2, 1fr) !important;
+        gap: 1rem !important;
+    }
+    
+    /* Remove shadows and rounded corners for cleaner print */
+    .shadow-sm, .shadow, .shadow-md, .shadow-lg {
+        box-shadow: none !important;
+    }
+    
+    .rounded-xl, .rounded-lg, .rounded {
+        border-radius: 0 !important;
+    }
+    
+    /* Ensure borders are visible */
+    .border, .border-l-4, .border-t-2 {
+        border-color: #000 !important;
+    }
+    
+    /* Optimize spacing for print */
+    .print-compact {
+        padding: 0.5rem !important;
+    }
+    
+    /* Ensure text is black for better print quality */
+    .text-gray-900, .text-gray-700, .text-gray-600 {
+        color: #000 !important;
+    }
+    
+    /* Keep color for important elements */
+    .text-green-600 {
+        color: #16a34a !important;
+    }
+    
+    .text-red-600 {
+        color: #dc2626 !important;
+    }
+    
+    .text-orange-600 {
+        color: #f97316 !important;
+    }
+    
+    /* Background colors for print */
+    .bg-gray-50 {
+        background-color: #f9fafb !important;
+        -webkit-print-color-adjust: exact;
+        print-color-adjust: exact;
+    }
+    
+    .bg-white {
+        background-color: #ffffff !important;
+    }
+    
+    /* Table styling for print */
+    table th {
+        background-color: #008ea2 !important;
+        color: white !important;
+        -webkit-print-color-adjust: exact;
+        print-color-adjust: exact;
+    }
+    
+    /* Remove hover effects */
+    .hover\:bg-gray-50:hover {
+        background-color: inherit !important;
+    }
+    
+    /* Optimize font sizes for print */
+    h1 {
+        font-size: 18pt;
+    }
+    
+    h2 {
+        font-size: 14pt;
+    }
+    
+    h3 {
+        font-size: 12pt;
+    }
+    
+    /* Ensure proper spacing between sections */
+    .mb-6 {
+        margin-bottom: 1.5rem !important;
+    }
+    
+    /* Force page breaks for long content sections */
+    .detailed-grades-section {
+        page-break-before: always;
+    }
+    
+    /* Ensure consistent margins across all pages */
+    .print-section {
+        margin-top: 0.5rem;
+        margin-bottom: 1rem;
+    }
+}
