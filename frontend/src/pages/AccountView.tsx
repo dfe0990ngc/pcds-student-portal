@@ -43,7 +43,7 @@ export default function AccountView({ account }: AccountViewProps) {
         {/* Fixed header for print that appears on all pages */}
         <div className="print-header">
           <Logo className="hidden print:block logo"/>
-          <h1>Student Account Statement</h1>
+          <h1 className="mb-4 font-semibold text-gray-900 text-xl" style={{ color: '#008ea2' }}>Student Account Statement</h1>
         </div>
 
         <div className="print-content">
