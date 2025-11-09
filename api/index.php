@@ -26,6 +26,7 @@ $router = new Router();
 
 // Maintenance
 $router->get('/api/clear-rate-limit-cache', [AuthController::class, 'clearRateLimitCache']);
+$router->get('/api/clear-expired-tokens', [AuthController::class, 'clearExpiredTokensAndLoginAttempts']);
 
 // Public routes
 $router->post('/api/auth/register', [AuthController::class, 'register']);

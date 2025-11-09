@@ -762,7 +762,7 @@ class AuthController {
         $this->response(true, 'Logged out successfully');
     }
 
-    public function clearRateLimitCache(): int {
+    public function clearRateLimitCache(): void {
         $files = glob(RATE_LIMIT_CACHE_PATH . '/*.json');
         $count = 0;
         foreach ($files as $file) {
@@ -771,6 +771,13 @@ class AuthController {
                 $count++;
             }
         }
-        return $count;
+        echo "Cache Deleted: ".$count;
+    }
+
+    public function clearExpiredTokensAndLoginAttempts(): void {
+        Database::query("DELETE FROM refresh_tokens WHERE ExpiresAt < NOW()");
+        Database::query("DELETE FROM login_attempts WHERE AttemptedAt < DATE_SUB(NOW(), INTERVAL 30 DAY)");
+        
+        echo "Expired Tokens and Login Attempts cleared";
     }
 }
