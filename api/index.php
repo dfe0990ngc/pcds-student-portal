@@ -24,6 +24,9 @@ if ($_SERVER['REQUEST_METHOD'] === 'OPTIONS') {
 
 $router = new Router();
 
+// Maintenance
+$router->get('/api/clear-rate-limit-cache', [AuthController::class, 'clearRateLimitCache']);
+
 // Public routes
 $router->post('/api/auth/register', [AuthController::class, 'register']);
 $router->post('/api/auth/login', [AuthController::class, 'login']);

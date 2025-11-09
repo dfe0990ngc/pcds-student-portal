@@ -48,6 +48,17 @@ define('TIMEZONE', 'Asia/Manila');
 // Session Configuration
 define('SESSION_LIFETIME', 1800);
 
+// ----------------------------------------
+// Cache Configuration
+// ----------------------------------------
+define('CACHE_PATH', __DIR__ . '/storage/cache');
+define('RATE_LIMIT_CACHE_PATH', CACHE_PATH . '/rate_limit');
+
+// Automatically create cache folders if missing
+if (!is_dir(RATE_LIMIT_CACHE_PATH)) {
+    mkdir(RATE_LIMIT_CACHE_PATH, 0775, true);
+}
+
 date_default_timezone_set(TIMEZONE);
 
 // ----------------------------------------

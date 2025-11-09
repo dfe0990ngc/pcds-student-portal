@@ -761,4 +761,16 @@ class AuthController {
         
         $this->response(true, 'Logged out successfully');
     }
+
+    public function clearRateLimitCache(): int {
+        $files = glob(RATE_LIMIT_CACHE_PATH . '/*.json');
+        $count = 0;
+        foreach ($files as $file) {
+            if (is_file($file)) {
+                unlink($file);
+                $count++;
+            }
+        }
+        return $count;
+    }
 }

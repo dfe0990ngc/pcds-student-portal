@@ -85,27 +85,42 @@ class Auth {
         return $payload['sub'] ?? null;
     }
     
-    public static function checkRateLimit(string $key, int $limit, int $window): bool {
-        $cacheFile = sys_get_temp_dir() . '/rate_limit_' . md5($key) . '.json';
-        
+    public static function checkRateLimit(string $key, int $limit, int $window): bool
+    {
+        // Define your custom cache directory (e.g. /storage/cache/rate_limit)
+        $cacheDir = RATE_LIMIT_CACHE_PATH;
+
+        // Ensure the directory exists
+        if (!is_dir($cacheDir)) {
+            mkdir($cacheDir, 0775, true);
+        }
+
+        // Use hashed key to make filename safe
+        $cacheFile = $cacheDir . '/rate_limit_' . md5($key) . '.json';
+
+        // Load existing data
         $data = [];
         if (file_exists($cacheFile)) {
             $content = file_get_contents($cacheFile);
             $data = json_decode($content, true) ?? [];
         }
-        
+
         $now = time();
+        // Filter out timestamps older than the time window
         $data = array_filter($data, fn($timestamp) => $timestamp > $now - $window);
-        
+
+        // If limit exceeded, return false
         if (count($data) >= $limit) {
             return false;
         }
-        
+
+        // Add current timestamp and save
         $data[] = $now;
         file_put_contents($cacheFile, json_encode($data));
-        
+
         return true;
     }
+
     
     private static function base64UrlEncode(string $data): string {
         return rtrim(strtr(base64_encode($data), '+/', '-_'), '=');
