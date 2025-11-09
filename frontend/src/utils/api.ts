@@ -1,3 +1,5 @@
+import { APIResponseType } from "../types";
+
 interface LoginResponse {
   success: boolean;
   message: string;
@@ -321,10 +323,33 @@ class ApiClient {
     return response; // Return full response including success and StudentNumber
   }
 
-  public logout(): void {
-    this.clearTokens();
-    this.cancelAllRequests();
+  public async logout(): Promise<APIResponseType> {
+    try {
+      // Call logout endpoint if authenticated
+      const response = await this.post<APIResponseType>(
+        '/auth/logout',
+        {}, // ✅ use empty object, not []
+        { skipAuth: false },
+        'logout'
+      );
+
+      return response;
+    } catch (error: any) {
+      // Return a consistent response type even on failure
+      return {
+        success: false,
+        message:
+          error?.response?.message ||
+          error?.message ||
+          'An error occurred while logging out.',
+      };
+    } finally {
+      // ✅ Always clear tokens and cancel any ongoing requests
+      this.clearTokens();
+      this.cancelAllRequests();
+    }
   }
+
 
   public isAuthenticated(): boolean {
     const tokens = this.getTokens();

@@ -50,12 +50,28 @@ define('SESSION_LIFETIME', 1800);
 
 date_default_timezone_set(TIMEZONE);
 
-// Error reporting
+// ----------------------------------------
+// Error Reporting and Logging Configuration
+// ----------------------------------------
+
+$logDir = __DIR__ . '/storage/logs';
+$logFile = $logDir . '/php-error.log';
+
+// Automatically create the folder if missing (like Laravel)
+if (!is_dir($logDir)) {
+    mkdir($logDir, 0775, true);
+}
+
+// Set PHP error handling
 if (DEBUG_MODE) {
     error_reporting(E_ALL);
     ini_set('display_errors', '1');
     ini_set('display_startup_errors', '1');
 } else {
-    error_reporting(0);
+    error_reporting(E_ALL);
     ini_set('display_errors', '0');
 }
+
+// Always log errors to your custom path
+ini_set('log_errors', '1');
+ini_set('error_log', $logFile);
