@@ -4,6 +4,11 @@ declare(strict_types=1);
 
 class Router {
     private array $routes = [];
+    private string $basePath = '';
+    
+    public function setBasePath(string $basePath): void {
+        $this->basePath = rtrim($basePath, '/');
+    }
     
     private function addRoute(string $method, string $path, array $handler, array $middleware = []): void {
         $this->routes[] = [
@@ -33,6 +38,15 @@ class Router {
     public function dispatch(): void {
         $method = $_SERVER['REQUEST_METHOD'];
         $uri = parse_url($_SERVER['REQUEST_URI'], PHP_URL_PATH);
+        
+        // Remove base path from URI if it exists
+        if ($this->basePath && strpos($uri, $this->basePath) === 0) {
+            $uri = substr($uri, strlen($this->basePath));
+            // Ensure URI starts with / after removing base path
+            if (empty($uri) || $uri[0] !== '/') {
+                $uri = '/' . $uri;
+            }
+        }
         
         foreach ($this->routes as $route) {
             if ($route['method'] === $method && $this->matchPath($route['path'], $uri)) {

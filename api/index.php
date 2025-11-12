@@ -24,6 +24,9 @@ if ($_SERVER['REQUEST_METHOD'] === 'OPTIONS') {
 
 $router = new Router();
 
+// Set the base path prefix - all routes will now be prefixed with this
+// $router->setBasePath('/student-portal');
+
 // Maintenance
 $router->get('/api/clear-rate-limit-cache', [AuthController::class, 'clearRateLimitCache']);
 $router->get('/api/clear-expired-tokens', [AuthController::class, 'clearExpiredTokensAndLoginAttempts']);
